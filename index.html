@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>rating</title>
+</head>
+<style >
+    *{margin:0;padding: 0}
+    div{width:500px; padding:100px;padding:0 auto;}
+ 
+</style>
+ 
+<body>               
+    <div class="rating" id="rating">
+        <img class="rating-item" src="http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_off.png" alt="" title="很差">
+        <img class="rating-item" src="http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_off.png" alt="" title="差">
+        <img class="rating-item" src="http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_off.png" alt="" title="一般">
+        <img class="rating-item" src="http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_off.png" alt="" title="好">
+        <img class="rating-item" src="http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_off.png" alt="" title="极好">
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="https://files.cnblogs.com/files/tonnytong/___jquery-1.12.0.min.js"></script>
+<script type="text/javascript">
+    (function($){
+        var ratingFunc = function(elWrap,options){
+            this._opts = {
+                num:1
+            };
+            this._opts = $.extend(this._opts,options);
+            this._el = $(elWrap);
+            this._ratingItems = this._el.find(".rating-item");
+ 
+            this._lightOn(this._opts.num);
+            this._bindEvent();
+        };
+ 
+        $.extend(ratingFunc.prototype,{
+            _lightOn: function(num){
+                var that = this;
+                that._ratingItems.each(function(index){
+                    var $this = $(this)
+                        , intNum = parseInt(num);
+                    $this.attr("src","http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_off.png");
+                    if((index +1) <=num)
+                    {
+                        $this.attr("src","http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_on.png");
+                        if(intNum != num){
+                            if(index +1 == intNum){
+                                $this.attr("src","http://images.cnblogs.com/cnblogs_com/tonnytong/769928/o_half-on.png");
+                            }
+                        }
+                    }
+                })
+            },
+            _calculateNum: function(obj,eventObj)
+            {
+                var that = this;
+ 
+                var imgWith = obj.width()
+                    , offset = obj.offset();
+                if((eventObj.pageX-offset.left) < (0.5*imgWith)){
+                    that._opts.num = obj.index()+1+0.5;
+                }else{
+                    that._opts.num = obj.index()+1;
+                }              
+            },
+            _bindEvent: function(){
+                var that = this;
+                that._ratingItems.on("click",function(e){
+                    that._calculateNum($(this),e);     
+                    that._lightOn(that._opts.num);
+                }).on("mousemove",function(e){
+                    that._calculateNum($(this),e);                         
+                    that._lightOn(that._opts.num);
+                })
+            }
+        })
+ 
+        $.ratingFunc = function(el,options){
+            return new ratingFunc(el,options);
+        };
+    })(jQuery);
+ 
+    $.ratingFunc("#rating",{num:3.5});
+ 
+</script>
